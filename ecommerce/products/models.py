@@ -83,7 +83,7 @@ class Product(models.Model):
 class ProductImage(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(null=True, blank=True, default='default.jpg')
+    image = models.ImageField(null=True, blank=True, default='products/default.jpg', upload_to="products")
     is_featured = models.BooleanField(default=False, blank=True, null=True)
     product = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
 
