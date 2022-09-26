@@ -33,7 +33,7 @@
     </div>
     <div class="row align-items-center py-3 px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
-            <a href="" class="text-decoration-none">
+            <a href="{% url 'products' %}" class="text-decoration-none">
                 <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
             </a>
         </div>
@@ -73,26 +73,25 @@
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
             <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
-                <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
+                <div class="navbar-nav w-100" style="height: 410px">
                     {% for top_category in top_categories %}
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link" data-toggle="dropdown">{{top_category}} <i class="fa fa-angle-down float-right mt-1"></i></a>
                         <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0">
                             {% for mid_category in top_category.midcategory_set.all %}
-                            <a href="/?category={{mid_category}}" class="dropdown-item">{{mid_category}}</a>
+                            <hr>
+                            <strong><span class="m-3">{{mid_category}}</span></strong>
+                            <hr>
+                            {% for bot_category in mid_category.botcategory_set.all %}
+                            <a href="{% url 'category' bot_category.id %}" class="dropdown-item">{{bot_category}}</a>
+                            {% endfor%}
                             {% endfor %}
                         </div>
                     </div>
                     {% endfor %}
-                    <a href="" class="nav-item nav-link">Shirts</a>
+
                     <a href="" class="nav-item nav-link">Jeans</a>
-                    <a href="" class="nav-item nav-link">Swimwear</a>
-                    <a href="" class="nav-item nav-link">Sleepwear</a>
-                    <a href="" class="nav-item nav-link">Sportswear</a>
-                    <a href="" class="nav-item nav-link">Jumpsuits</a>
-                    <a href="" class="nav-item nav-link">Blazers</a>
-                    <a href="" class="nav-item nav-link">Jackets</a>
-                    <a href="" class="nav-item nav-link">Shoes</a>
+
                 </div>
             </nav>
         </div>

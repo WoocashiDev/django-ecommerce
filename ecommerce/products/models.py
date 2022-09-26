@@ -1,3 +1,4 @@
+from email.policy import default
 from unicodedata import name
 from django.db import models
 import uuid
@@ -17,6 +18,7 @@ class TopCategory(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50, null=True, blank=True)
+    category_image = models.ImageField(null=True, blank=True, default='categories/default.jpg', upload_to="categories")
 
     def __str__(self):
         return self.name
@@ -26,6 +28,7 @@ class MidCategory(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50, null=True, blank=True)
     top_category = models.ForeignKey(TopCategory, on_delete=models.CASCADE, null=True)
+    category_image = models.ImageField(null=True, blank=True, default='categories/default.jpg', upload_to="categories")
 
     def __str__(self):
         return self.name
@@ -35,25 +38,10 @@ class BotCategory(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50, null=True, blank=True)
     mid_category = models.ForeignKey(MidCategory, on_delete=models.CASCADE, null=True)
+    category_image = models.ImageField(null=True, blank=True, default='categories/default.jpg', upload_to="categories")
 
     def __str__(self):
         return self.name
-
-
-class ProductStock(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    created = models.DateTimeField(auto_now_add=True)
-    quantity = models.IntegerField(null=True, blank=True)
-
-    @property
-    def in_stock(self):
-        is_in_stock = False
-        if self.quantity == 0:
-            is_in_stock=False
-        else:
-            is_in_stock=True
-        
-        return is_in_stock
 
 
 class ProductTag(models.Model):
@@ -69,15 +57,27 @@ class Product(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=150, null=True, blank=True)
-    size = models.IntegerField(null=True, blank=True)
+    size = models.CharField(max_length=10, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
+    old_price = models.FloatField(null=True, blank=True)
+    promoted = models.BooleanField(null=True, blank=True, default=False)
     brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True)
     bot_category = models.ManyToManyField(BotCategory, blank=False)
-    stock = models.ManyToManyField(ProductStock, blank=True)
+    stock = models.IntegerField(null=True, blank=True)
     tags = models.ManyToManyField(ProductTag, blank=True)
 
     def __str__(self):
-        return ' '.join((self.name+self.size))
+        return f"{self.name} {str(self.size)}"
+    
+    @property
+    def in_stock(self):
+        is_in_stock = False
+        if self.stock == 0:
+            is_in_stock=False
+        else:
+            is_in_stock=True
+        
+        return is_in_stock
 
 
 class ProductImage(models.Model):
@@ -88,4 +88,4 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return ' '.join((self.product.name, self.id))
+        return ' '.join((self.product.name, self.product.size))
