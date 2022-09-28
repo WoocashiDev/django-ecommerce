@@ -1,0 +1,84 @@
+{% extends 'main.html' %}
+{% block content %}
+{% load static %}
+
+
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Shopping Cart</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid pt-5">
+        <form action="" method="POST">
+            {% csrf_token %}
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-bordered text-center mb-0">
+                    <thead class="bg-secondary text-dark">
+                        <tr>
+                            <th>Produkty w koszyku</th>
+                            <th>Cena (szt.)</th>
+                            <th>Ilość</th>
+                            <th>Do Zapłaty (PLN)</th>
+                            <th>Usuń</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        {% for cart_item in shopping_cart.shoppingcartitem_set.all %}
+                        <tr class="cart-item">
+                            <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;">{{ cart_item.product.name }}</td>
+                            <td class="align-middle product-price">{{ cart_item.product.price }}</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-minus" >
+                                        <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm bg-secondary text-center product-quantity" value="{{ cart_item.quantity }}" name="quantity">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle total-value">{{cart_item.product.price}}</td>
+                            <td class="align-middle"><a href="{% url 'remove-item' cart_item.id %}" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h5 class="font-weight-semi-bold m-0">Podsumowanie</h5>
+                    </div>
+
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="font-weight-bold">Suma (PLN)</small>
+                            <h5 class="font-weight-bold final-price">0</h5>
+                        </div>
+                        <input type="submit" class="btn btn-block btn-primary my-3 py-3" value="Do kasy"/>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+    </div>
+    <!-- Cart End -->
+    
+{% endblock %}
