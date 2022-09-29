@@ -51,14 +51,24 @@ def AddCartItemPage(request, item_id):
     # checking if cart item was added before:
     cart_item =shopping_cart.shoppingcartitem_set.filter(product=product).first()
 
-    
+    # setting default quantity as 1
+    item_quantity = 1
+
+    # taking quantity from the form posted from product-details page
+    if request.method == "POST":
+        item_quantity = int(request.POST['quantity'])
+        print(item_quantity)
+
+    # checking if item is already in the cart
     if cart_item:
         messages.success(request, 'Dodano kolejną sztukę produktu do koszyka')
-        cart_item.quantity += 1
+        cart_item.quantity += item_quantity
         cart_item.save()
+    
+    # if not, new item is being created
     else:
         new_cart_item = ShoppingCartItem.objects.create(
-            cart=shopping_cart, product=product, quantity=1, unit_price=product.price
+            cart=shopping_cart, product=product, quantity=item_quantity, unit_price=product.price
         )
         new_cart_item.save()
         messages.success(request, 'Dodano nowy produkt do koszyka')

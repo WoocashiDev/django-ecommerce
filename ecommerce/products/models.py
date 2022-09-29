@@ -65,6 +65,9 @@ class Product(models.Model):
     bot_category = models.ManyToManyField(BotCategory, blank=False)
     stock = models.IntegerField(null=True, blank=True)
     tags = models.ManyToManyField(ProductTag, blank=True)
+    short_description = models.TextField(null=True, blank=True)
+    long_description = models.TextField(null=True, blank=True)
+    information = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} {str(self.size)}"

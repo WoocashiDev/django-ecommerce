@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Product, TopCategory, ProductTag, ProductBrand, ProductImage, MidCategory, BotCategory
 import random
+from shop.forms import SaveCartItemForm
 
 # Create your views here.
 def productsMainPage(request):
@@ -53,3 +54,19 @@ def productsSubCategoryCollectionPage(request, category_id):
         "top_categories": top_categories
     }
     return render(request, 'products/products-subcategories-collection.html', context)
+
+def productDetailsPage(request, product_id):
+    product = Product.objects.get(id=product_id)
+    images = product.productimage_set.all()
+    product_category = product.bot_category.first()
+    same_category_products = Product.objects.filter(bot_category = product_category)
+
+    form = SaveCartItemForm()
+
+    context = {
+        "form": form,
+        "product": product,
+        "images": images,
+        "same_category_products": same_category_products
+    }
+    return render(request, 'products/product-detail.html', context)

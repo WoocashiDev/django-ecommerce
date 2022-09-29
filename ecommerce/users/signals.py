@@ -2,6 +2,7 @@ import email
 from django.db.models.signals import post_save, post_delete
 from django.contrib.auth.models import User
 from .models import UserProfile
+from shop.models import ShoppingCart
 
 def createProfile(sender, instance, created, **kwargs):
     if created:
@@ -14,6 +15,11 @@ def createProfile(sender, instance, created, **kwargs):
         profile.first_name = user.first_name
         profile.last_name = user.last_name
         profile.save()
+
+        shopping_cart = ShoppingCart.objects.create(
+            user = profile
+        )
+        shopping_cart.save()
 
 post_save.connect(createProfile, sender=User)
 

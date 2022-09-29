@@ -16,7 +16,7 @@ class ShoppingCart(models.Model):
     
 class ShoppingCartItem(models.Model):
     cart = models.ForeignKey(ShoppingCart, null=True, on_delete=models.CASCADE)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(null=True, blank=False, default=1)
     unit_price = models.FloatField(null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True)

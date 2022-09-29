@@ -20,5 +20,6 @@ urlpatterns = [
     path('', views.productsMainPage, name="products"),
     path('category/<str:category_id>', views.productsCollectionPage, name="category"),
     path('category-collection/<str:category_id>', views.productsCategoryCollectionPage, name="category-collection"),
-    path('subcategory-collection/<str:category_id>', views.productsSubCategoryCollectionPage, name="subcategory-collection")
+    path('subcategory-collection/<str:category_id>', views.productsSubCategoryCollectionPage, name="subcategory-collection"),
+    path("product-details/<str:product_id>/", views.productDetailsPage, name="product-details")
 ]
