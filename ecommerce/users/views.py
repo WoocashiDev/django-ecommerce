@@ -46,6 +46,7 @@ def registerPage(request):
             user.save()
             
             messages.success(request, 'Konto zostało utworzone! Udanych zakupów!')
+            print('konto utworzone')
             login(request, user)
             return redirect('products')
 

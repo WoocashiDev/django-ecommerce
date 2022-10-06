@@ -1,0 +1,72 @@
+
+{% if "?" in request.get_full_path %}
+
+<div class="col-12 pb-1">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center mb-3">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="{{request.get_full_path}}&page=1">&laquo; first</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="{{request.get_full_path}}&page={{ page_obj.previous_page_number }}">previous</a>
+        </li>
+        {% endif %}
+
+        {% for obj in paginator %}
+        {% if page_obj.number == obj.number %}
+        <li class="page-item active"><a class="page-link" href="{{request.get_full_path}}&page={{obj.number}}">{{obj.number}}</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="{{request.get_full_path}}&page={{obj.number}}">{{obj.number}}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{request.get_full_path}}&page={{ page_obj.next_page_number }}">next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="{{request.get_full_path}}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        </li>
+        {% endif %}
+
+      </ul>
+      
+    </nav>
+
+
+
+{% else %}
+<div class="col-12 pb-1">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center mb-3">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">&laquo; first</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+        </li>
+        {% endif %}
+
+        {% for obj in paginator %}
+        {% if page_obj.number == obj.number %}
+        <li class="page-item active"><a class="page-link" href="?page={{obj.number}}">{{obj.number}}</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{obj.number}}">{{obj.number}}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        </li>
+        {% endif %}
+
+      </ul>
+      
+    </nav>
+    {% endif %}

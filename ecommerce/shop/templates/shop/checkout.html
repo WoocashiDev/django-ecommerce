@@ -1,0 +1,93 @@
+{% extends 'main.html' %}
+{% block content %}
+    <!-- Checkout Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <h4 class="font-weight-semi-bold mb-4">Adres dostawy</h4>
+                    <form action="{% url 'checkout' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for field in form %}
+                            <div class="col-md-6 form-group">
+                                <label>{{field.label}}</label>
+                                {{field}}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <input type="submit" class="btn btn-primary my-3 py-3" value="Zapisz"/>
+                    </form>
+                </div>
+                
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Podsumowanie zamówienia</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="font-weight-medium mb-3">Produkty</h5>
+                        {% for item in cart.shoppingcartitem_set.all %}
+                        <div class="d-flex justify-content-between">
+                            {% if item.product.name|length > 30 %}
+                            <p>{{item.product.name|slice:'35'}}...</p>
+                            {% else %}
+                            <p>{{item.product.name}}...</p>
+                            {% endif %}
+                            <p><small>x {{item.quantity}}</small></p>
+                            <p>{{item.total_price}}</p>
+                        </div>
+                        {% endfor %}
+                        <hr class="mt-0">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Cena produktów</h6>
+                            <h6 class="font-weight-medium">{{final_price}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Dostawa</h6>
+                            <h6 class="font-weight-medium">Darmowa!</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Do zapłaty</h5>
+                            <h5 class="font-weight-bold">{{final_price}}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Metoda Płatności</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
+                                <label class="custom-control-label" for="paypal">Paypal</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
+                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
+                                <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+
+{% endblock %}

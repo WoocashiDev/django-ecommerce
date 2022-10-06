@@ -2,6 +2,9 @@ from django.shortcuts import render
 from .models import Product, TopCategory, ProductTag, ProductBrand, ProductImage, MidCategory, BotCategory
 import random
 from shop.forms import SaveCartItemForm
+from django.views.generic import ListView
+from .forms import ProductSearchForm
+import re
 
 # Create your views here.
 def productsMainPage(request):
@@ -56,6 +59,7 @@ def productsSubCategoryCollectionPage(request, category_id):
     return render(request, 'products/products-subcategories-collection.html', context)
 
 def productDetailsPage(request, product_id):
+    top_categories = TopCategory.objects.all()
     product = Product.objects.get(id=product_id)
     images = product.productimage_set.all()
     product_category = product.bot_category.first()
@@ -64,9 +68,41 @@ def productDetailsPage(request, product_id):
     form = SaveCartItemForm()
 
     context = {
+        "top_categories": top_categories,
         "form": form,
         "product": product,
         "images": images,
         "same_category_products": same_category_products
     }
     return render(request, 'products/product-detail.html', context)
+
+
+class ProductSearchView(ListView):
+    model = Product
+    context_object_name = 'products'
+    paginate_by = 3
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        queryset = object_list if object_list is not None else self.object_list
+
+        form = ProductSearchForm(self.request.GET)
+
+        if form.is_valid():
+
+            name = form['name'].value()
+
+        if name:
+                queryset = queryset.filter(
+                    name__icontains=name
+                )
+        
+        return super().get_context_data(
+            object_list=queryset,
+            **kwargs
+        )
+
+        # fixing issues with pagination and filtering
+    def setup(self, request, *args, **kwargs) -> None:
+        request.GET.get("page")
+        request.META["QUERY_STRING"] = re.sub("(&|\?)page=(.)*", "", request.META.get("QUERY_STRING", ""))
+        return super().setup(request, *args, **kwargs)
