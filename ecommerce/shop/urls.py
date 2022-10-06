@@ -19,5 +19,6 @@ from . import views
 urlpatterns = [
     path('shopping-cart', views.ShoppingCartPage, name='shopping-cart'),
     path('remove-item/<str:item_id>/', views.RemoveCartItemPage, name='remove-item'),
-    path('add-item/<str:item_id>/', views.AddCartItemPage, name='add-item')
+    path('add-item/<str:item_id>/', views.AddCartItemPage, name='add-item'),
+    path('checkout', views.CheckoutPage, name='checkout')
 ]

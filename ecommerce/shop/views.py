@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import ShoppingCart, ShoppingCartItem
-from users.models import UserProfile
-from products.models import Product
+from users.models import UserProfile, UserAddress
+from products.models import Product, TopCategory
 from .forms import SaveCartItemForm
+from users.forms import UserAddressForm
 from django.contrib import messages
 
 
 def ShoppingCartPage(request):
+    top_categories = TopCategory.objects.all()
     user = request.user
     profile = UserProfile.objects.get(user=user)
     shopping_cart = ShoppingCart.objects.get(user=profile)
@@ -17,15 +19,19 @@ def ShoppingCartPage(request):
         form = SaveCartItemForm(request.POST)
         item_no = 0
         for cart_item in shopping_cart_items:
-            print(request.POST)
             cart_item.quantity = request.POST.getlist('quantity')[item_no]
+            cart_item.unit_price = cart_item.product.price
+            cart_item.total_price = cart_item.product.price * int(cart_item.quantity)
+            
             cart_item.save()
             item_no += 1
+        return redirect('checkout')
 
 
     context={
         'shopping_cart': shopping_cart,
-        'form': form
+        'form': form,
+        'top_categories': top_categories
         }
     return render(request, 'shop/cart.html', context)
 
@@ -73,3 +79,42 @@ def AddCartItemPage(request, item_id):
         new_cart_item.save()
         messages.success(request, 'Dodano nowy produkt do koszyka')
     return redirect(request.GET['next'] if 'next' in request.GET else 'products')
+
+
+
+def CheckoutPage(request):
+    user = request.user
+    profile = UserProfile.objects.get(user=user)
+    cart = ShoppingCart.objects.get(user=profile)
+
+    cart_items = cart.shoppingcartitem_set.all()
+    final_price = 0
+    for item in cart_items:
+        final_price += item.total_price
+    
+
+    # checking if user address exists in the database
+    try:
+        user_address = UserAddress.objects.get(profile=profile)
+    
+    # creating user address object if it is non-existent
+    except:
+        user_address = UserAddress.objects.create(
+            profile=profile
+        )
+
+    form = UserAddressForm(instance=user_address)
+
+    if request.method == 'POST':
+        form = UserAddressForm(request.POST, instance=user_address)
+        if form.is_valid():
+            form.save()
+            return redirect('checkout')
+
+
+    context={
+        'form': form,
+        'cart': cart,
+        'final_price': final_price
+    }
+    return render(request, 'shop/checkout.html', context)
